@@ -20,6 +20,7 @@ export default function BackgroundEffect() {
     const colors = ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe']
 
     class Particle {
+      private static canvas: HTMLCanvasElement;
       x: number
       y: number
       size: number
@@ -27,9 +28,20 @@ export default function BackgroundEffect() {
       speedY: number
       color: string
 
+      static setCanvas(canvas: HTMLCanvasElement) {
+        Particle.canvas = canvas;
+      }
+
+      static getDimensions() {
+        return {
+          width: Particle.canvas.width,
+          height: Particle.canvas.height
+        };
+      }
+
       constructor() {
-        this.x = Math.random() * canvas.width
-        this.y = Math.random() * canvas.height
+        this.x = Math.random() * Particle.canvas.width
+        this.y = Math.random() * Particle.canvas.height
         this.size = Math.random() * 5 + 1
         this.speedX = Math.random() * 3 - 1.5
         this.speedY = Math.random() * 3 - 1.5
@@ -40,10 +52,10 @@ export default function BackgroundEffect() {
         this.x += this.speedX
         this.y += this.speedY
 
-        if (this.x < 0) this.x = canvas.width
-        if (this.x > canvas.width) this.x = 0
-        if (this.y < 0) this.y = canvas.height
-        if (this.y > canvas.height) this.y = 0
+        if (this.x < 0) this.x = Particle.canvas.width
+        if (this.x > Particle.canvas.width) this.x = 0
+        if (this.y < 0) this.y = Particle.canvas.height
+        if (this.y > Particle.canvas.height) this.y = 0
       }
 
       draw() {
@@ -63,8 +75,9 @@ export default function BackgroundEffect() {
     }
 
     function animate() {
-      if (!ctx) return
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (!ctx) return;
+      const { width, height } = Particle.getDimensions();
+      ctx.clearRect(0, 0, width, height);
       for (let i = 0; i < particles.length; i++) {
         particles[i].update()
         particles[i].draw()
@@ -72,13 +85,15 @@ export default function BackgroundEffect() {
       requestAnimationFrame(animate)
     }
 
+    Particle.setCanvas(canvas)
     init()
     animate()
 
     const handleResize = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
 
     window.addEventListener('resize', handleResize)
 
