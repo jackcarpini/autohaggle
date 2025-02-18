@@ -137,6 +137,7 @@ if __name__ == '__main__':
 
     # Format the saledate
     extended_df['saledate'] = pd.to_datetime(extended_df['saledate']).dt.strftime('%m/%d/%Y')
+    
 
 
 
